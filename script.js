@@ -27,40 +27,50 @@ let audioContext;
 
 function startQuiz() {
     currentQuestion = 0;
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    audioContext = new (
+        window.AudioContext || window.webkitAudioContext
+    )();
+
     showQuestion();
 }
 
 function showQuestion() {
     document.getElementById("monster").classList.remove("scare");
     document.body.classList.remove("scary");
+
     document.getElementById("message").textContent = "";
 
     const question = questions[currentQuestion];
 
-    document.getElementById("question").textContent = question.question;
+    document.getElementById("question").textContent =
+        question.question;
 
     const answers = document.getElementById("answers");
     answers.innerHTML = "";
 
     question.answers.forEach(answer => {
         const button = document.createElement("button");
+
         button.textContent = answer;
         button.onclick = triggerJumpscare;
+
         answers.appendChild(button);
     });
 }
 
 function triggerJumpscare() {
-    document.getElementById("monster").classList.add("scare");
+    const monster = document.getElementById("monster");
+
+    monster.classList.add("scare");
     document.body.classList.add("scary");
 
     document.getElementById("message").textContent =
         "WRONG ANSWER!!!";
 
-    playScream();
-
     document.getElementById("answers").innerHTML = "";
+
+    playScream();
 
     setTimeout(() => {
         currentQuestion++;
@@ -70,37 +80,64 @@ function triggerJumpscare() {
         } else {
             finishQuiz();
         }
-    }, 1200);
+    }, 1600);
 }
 
 function playScream() {
     if (!audioContext) return;
 
     const oscillator = audioContext.createOscillator();
+    const secondOscillator = audioContext.createOscillator();
+
     const gain = audioContext.createGain();
 
     oscillator.type = "sawtooth";
-    oscillator.frequency.setValueAtTime(900, audioContext.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(
-        180,
-        audioContext.currentTime + 0.7
+    secondOscillator.type = "square";
+
+    oscillator.frequency.setValueAtTime(
+        1100,
+        audioContext.currentTime
     );
 
-    gain.gain.setValueAtTime(0.0001, audioContext.currentTime);
-    gain.gain.exponentialRampToValueAtTime(
-        0.15,
-        audioContext.currentTime + 0.05
+    oscillator.frequency.exponentialRampToValueAtTime(
+        180,
+        audioContext.currentTime + 1
     );
+
+    secondOscillator.frequency.setValueAtTime(
+        700,
+        audioContext.currentTime
+    );
+
+    secondOscillator.frequency.exponentialRampToValueAtTime(
+        120,
+        audioContext.currentTime + 1
+    );
+
+    gain.gain.setValueAtTime(
+        0.0001,
+        audioContext.currentTime
+    );
+
+    gain.gain.linearRampToValueAtTime(
+        0.10,
+        audioContext.currentTime + 0.08
+    );
+
     gain.gain.exponentialRampToValueAtTime(
         0.0001,
-        audioContext.currentTime + 0.8
+        audioContext.currentTime + 1
     );
 
     oscillator.connect(gain);
+    secondOscillator.connect(gain);
     gain.connect(audioContext.destination);
 
     oscillator.start();
-    oscillator.stop(audioContext.currentTime + 0.8);
+    secondOscillator.start();
+
+    oscillator.stop(audioContext.currentTime + 1);
+    secondOscillator.stop(audioContext.currentTime + 1);
 }
 
 function finishQuiz() {
@@ -118,9 +155,12 @@ function finishQuiz() {
 
 function restartQuiz() {
     document.getElementById("restart").style.display = "none";
+
     document.getElementById("answers").innerHTML =
         '<button onclick="startQuiz()">START QUIZ</button>';
 
-    document.getElementById("question").textContent = "Are you ready?";
+    document.getElementById("question").textContent =
+        "Are you ready?";
+
     document.getElementById("message").textContent = "";
 }
