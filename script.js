@@ -24,9 +24,11 @@ const questions = [
 
 let currentQuestion = 0;
 let audioContext;
+let locked = false;
 
 function startQuiz() {
     currentQuestion = 0;
+    locked = false;
 
     audioContext = new (
         window.AudioContext || window.webkitAudioContext
@@ -36,33 +38,32 @@ function startQuiz() {
 }
 
 function showQuestion() {
+    locked = false;
+
     document.getElementById("monster").classList.remove("scare");
     document.body.classList.remove("scary");
-
     document.getElementById("message").textContent = "";
 
-    const question = questions[currentQuestion];
+    const q = questions[currentQuestion];
 
-    document.getElementById("question").textContent =
-        question.question;
+    document.getElementById("question").textContent = q.question;
 
     const answers = document.getElementById("answers");
     answers.innerHTML = "";
 
-    question.answers.forEach(answer => {
+    q.answers.forEach(answer => {
         const button = document.createElement("button");
-
         button.textContent = answer;
         button.onclick = triggerJumpscare;
-
         answers.appendChild(button);
     });
 }
 
 function triggerJumpscare() {
-    const monster = document.getElementById("monster");
+    if (locked) return;
+    locked = true;
 
-    monster.classList.add("scare");
+    document.getElementById("monster").classList.add("scare");
     document.body.classList.add("scary");
 
     document.getElementById("message").textContent =
@@ -73,6 +74,9 @@ function triggerJumpscare() {
     playScream();
 
     setTimeout(() => {
+        document.getElementById("monster").classList.remove("scare");
+        document.body.classList.remove("scary");
+
         currentQuestion++;
 
         if (currentQuestion < questions.length) {
@@ -87,80 +91,69 @@ function playScream() {
     if (!audioContext) return;
 
     const oscillator = audioContext.createOscillator();
-    const secondOscillator = audioContext.createOscillator();
-
+    const second = audioContext.createOscillator();
     const gain = audioContext.createGain();
 
     oscillator.type = "sawtooth";
-    secondOscillator.type = "square";
+    second.type = "square";
 
     oscillator.frequency.setValueAtTime(
-        1100,
-        audioContext.currentTime
+        1100, audioContext.currentTime
     );
 
     oscillator.frequency.exponentialRampToValueAtTime(
-        180,
-        audioContext.currentTime + 1
+        160, audioContext.currentTime + 1.1
     );
 
-    secondOscillator.frequency.setValueAtTime(
-        700,
-        audioContext.currentTime
+    second.frequency.setValueAtTime(
+        750, audioContext.currentTime
     );
 
-    secondOscillator.frequency.exponentialRampToValueAtTime(
-        120,
-        audioContext.currentTime + 1
+    second.frequency.exponentialRampToValueAtTime(
+        100, audioContext.currentTime + 1.1
     );
 
     gain.gain.setValueAtTime(
-        0.0001,
-        audioContext.currentTime
+        0.0001, audioContext.currentTime
     );
 
     gain.gain.linearRampToValueAtTime(
-        0.10,
-        audioContext.currentTime + 0.08
+        0.10, audioContext.currentTime + 0.08
     );
 
     gain.gain.exponentialRampToValueAtTime(
-        0.0001,
-        audioContext.currentTime + 1
+        0.0001, audioContext.currentTime + 1.1
     );
 
     oscillator.connect(gain);
-    secondOscillator.connect(gain);
+    second.connect(gain);
     gain.connect(audioContext.destination);
 
     oscillator.start();
-    secondOscillator.start();
+    second.start();
 
-    oscillator.stop(audioContext.currentTime + 1);
-    secondOscillator.stop(audioContext.currentTime + 1);
+    oscillator.stop(audioContext.currentTime + 1.1);
+    second.stop(audioContext.currentTime + 1.1);
 }
 
 function finishQuiz() {
-    document.getElementById("monster").classList.remove("scare");
-    document.body.classList.remove("scary");
-
     document.getElementById("question").textContent =
         "YOU SURVIVED... OR DID YOU?";
 
     document.getElementById("message").textContent =
-        "You got 0 correct answers. Congratulations!";
+        "CONGRATULATIONS. ZERO CORRECT ANSWERS.";
 
     document.getElementById("restart").style.display = "block";
+    document.getElementById("answers").innerHTML = "";
 }
 
 function restartQuiz() {
     document.getElementById("restart").style.display = "none";
+    document.getElementById("message").textContent = "";
 
     document.getElementById("answers").innerHTML =
         '<button onclick="startQuiz()">START QUIZ</button>';
 
     document.getElementById("question").textContent =
         "Are you ready?";
-
-    document.getElementById("message").textContent = "";
 }
