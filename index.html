@@ -1,0 +1,37 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Wrong Answer Quiz</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>THE WRONG ANSWER QUIZ</h1>
+        <p class="subtitle">Every answer is wrong...</p>
+
+        <div id="monster" class="monster">
+            <div class="eyes">
+                <div class="eye"></div>
+                <div class="eye"></div>
+            </div>
+            <div class="mouth"></div>
+        </div>
+
+        <div id="quiz">
+            <h2 id="question">Are you ready?</h2>
+            <div id="answers">
+                <button onclick="startQuiz()">START QUIZ</button>
+            </div>
+        </div>
+
+        <p id="message"></p>
+        <button id="restart" onclick="restartQuiz()">PLAY AGAIN</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
