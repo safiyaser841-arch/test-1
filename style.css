@@ -14,34 +14,29 @@ body {
     justify-content: center;
     align-items: center;
     text-align: center;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 .container {
     width: 90%;
     max-width: 650px;
-    padding: 30px;
-    position: relative;
-    z-index: 1;
 }
 
 h1 {
-    color: #ff1010;
+    color: red;
     font-size: clamp(28px, 6vw, 45px);
-    text-shadow: 0 0 10px red, 0 0 30px darkred;
-    animation: flicker 3s infinite;
+    text-shadow: 0 0 15px red, 0 0 35px darkred;
 }
 
 .subtitle {
     color: #888;
-    margin: 15px 0 35px;
-    letter-spacing: 4px;
+    letter-spacing: 5px;
+    margin: 20px 0 40px;
 }
 
 #question {
     margin: 30px 0;
     font-size: 25px;
-    text-shadow: 0 0 10px red;
 }
 
 #answers {
@@ -50,85 +45,24 @@ h1 {
 }
 
 button {
-    padding: 16px;
-    border: 1px solid #a00000;
-    background: #160000;
+    padding: 17px;
     color: white;
-    font-size: 16px;
+    background: #190000;
+    border: 1px solid red;
+    border-radius: 5px;
+    font-size: 17px;
     cursor: pointer;
-    border-radius: 4px;
-    transition: 0.2s;
 }
 
 button:hover {
-    background: #a00000;
-    box-shadow: 0 0 25px red;
-    transform: scale(1.03);
-}
-
-.monster {
-    display: none;
-}
-
-.monster.scare {
-    display: flex;
-    position: fixed;
-    inset: 0;
-    z-index: 10;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, #350000 0%, #090000 65%);
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    border: none;
-    border-radius: 0;
-    animation: jumpscare 0.15s infinite alternate;
-}
-
-.eyes {
-    display: flex;
-    gap: 55px;
-}
-
-.eye {
-    width: 55px;
-    height: 75px;
-    background: #ff0000;
-    border-radius: 50%;
-    box-shadow: 0 0 20px red, 0 0 60px red;
-    animation: eyes 0.4s infinite alternate;
-}
-
-.mouth {
-    width: 110px;
-    height: 100px;
-    background: black;
-    border: 5px solid #d00000;
-    border-radius: 50%;
-    margin-top: 45px;
-    box-shadow: 0 0 30px red;
-    animation: mouth 0.3s infinite alternate;
-}
-
-.monster.scare::after {
-    content: "YOU ANSWERED WRONG";
-    position: absolute;
-    bottom: 12%;
-    color: red;
-    font-size: clamp(22px, 5vw, 40px);
-    font-weight: bold;
-    text-shadow: 0 0 20px red;
-}
-
-body.scary {
-    animation: shake 0.1s infinite;
+    background: darkred;
+    box-shadow: 0 0 20px red;
 }
 
 #message {
     color: red;
-    font-size: 24px;
-    margin-top: 20px;
+    font-size: 25px;
+    margin-top: 25px;
 }
 
 #restart {
@@ -136,19 +70,54 @@ body.scary {
     margin: 25px auto;
 }
 
+#monster {
+    display: none;
+}
+
+#monster.scare {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: black;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: flash 0.15s infinite alternate;
+}
+
+#monster img {
+    width: 100%;
+    height: 85%;
+    object-fit: cover;
+    object-position: center;
+}
+
+#monster h2 {
+    color: red;
+    font-size: clamp(20px, 5vw, 38px);
+    text-shadow: 0 0 20px red;
+    padding: 10px;
+}
+
+#monster.scare {
+    animation: jumpscare 0.13s infinite alternate;
+}
+
+body.scary {
+    animation: shake 0.1s infinite;
+}
+
 @keyframes jumpscare {
     from { transform: scale(1); }
-    to { transform: scale(1.12); }
+    to { transform: scale(1.08); }
 }
 
-@keyframes eyes {
-    from { opacity: 0.5; }
-    to { opacity: 1; }
-}
-
-@keyframes mouth {
-    from { transform: scaleY(0.7); }
-    to { transform: scaleY(1.3); }
+@keyframes flash {
+    from { filter: brightness(0.6); }
+    to { filter: brightness(1.4); }
 }
 
 @keyframes shake {
@@ -157,10 +126,5 @@ body.scary {
     50% { transform: translate(2px, -3px); }
     75% { transform: translate(-2px, 3px); }
     100% { transform: translate(0, 0); }
-}
-
-@keyframes flicker {
-    0%, 18%, 22%, 60%, 64%, 100% { opacity: 1; }
-    20%, 62% { opacity: 0.3; }
 }
 
